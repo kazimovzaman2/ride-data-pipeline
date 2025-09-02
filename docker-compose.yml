@@ -10,12 +10,12 @@ services:
           cpus: '1'
           memory: "2g"
     volumes:
-      - minio_data:/data
+      - nyc-taxi-minio-data:/data
     ports:
       - "9000:9000"
       - "9001:9001"
     networks:
-      - minio-net
+      - nyc-taxi-net
     environment:
       MINIO_ACCESS_KEY: "telcoaz"
       MINIO_SECRET_KEY: "Telco12345"
@@ -27,9 +27,9 @@ services:
       retries: 3
 
 volumes:
-  minio_data:
+  nyc-taxi-minio-data:
 
 networks:
-  minio-net:
+  nyc-taxi-net:
     driver: bridge
 
