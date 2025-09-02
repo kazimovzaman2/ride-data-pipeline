@@ -3,6 +3,7 @@ version: "3.8"
 x-airflow-common: &airflow-common
   build:
     context: .
+  user: "0:0"
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
@@ -78,7 +79,9 @@ services:
     command:
       - -c
       - |
-        ls; sh init-airflow.sh; echo "Completed database and user init"
+        echo "Starting initialization..."
+        sh init-airflow.sh
+        echo "Completed database and user init"
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: "true"
