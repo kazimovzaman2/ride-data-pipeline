@@ -1,12 +1,13 @@
 FROM apache/airflow:slim-3.0.1-python3.10
 
-LABEL maintainer="Zaman Kazimov"
+LABEL maintainer="Alisahib Gadimov"
 
 USER root
 
 COPY init-airflow.sh init-airflow.sh
 RUN chmod +x init-airflow.sh
 
+# Install basic system utilities
 RUN apt-get update && \
     mkdir -p /usr/share/man/man1 && \
     apt-get install -y --no-install-recommends \
@@ -27,5 +28,8 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+USER airflow
 COPY requirements.txt requirements.txt
 RUN pip install apache-airflow==3.0.1 -r requirements.txt
+
+USER root
