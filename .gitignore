@@ -29,7 +29,6 @@ data/processed/
 
 # Compiled files
 *.class
-*.jar
 *.war
 *.ear
 
