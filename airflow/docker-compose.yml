@@ -4,11 +4,17 @@ x-airflow-common: &airflow-common
   build:
     context: .
   environment: &airflow-common-env
-    AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: "false"
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW_CONN_METADATA_DB: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW_VAR__METADATA_DB_SCHEMA: airflow
+    AIRFLOW__CORE__FERNET_KEY: 81HqDtbqAywKSOumSha3BhWNOdQ26slT6K0YaZeZyPs=
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-    AIRFLOW__CORE__FERNET_KEY: 81HqDtbqAywKSOumSha3BhWNOdQ26slT6K0YaZeZyPs=
+    AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS: "false"
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: 5
+    AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: "true"
     AIRFLOW__API_AUTH__JWT_SECRET: xGjtVAOdYN2W/7Am+krPaYi+4TT3rwPHKNDi4xwSbT8=
     AIRFLOW_CONFIG: "/opt/airflow/config/airflow.cfg"
   volumes:
@@ -23,15 +29,13 @@ services:
   postgres:
     image: postgres:15-bullseye
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    networks:
-      - ride_data_net
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "Zaman"]
+      test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 10s
       retries: 5
       start_period: 5s
@@ -40,8 +44,6 @@ services:
   airflow-webserver:
     <<: *airflow-common
     command: webserver
-    networks:
-      - ride_data_net
     ports:
       - "8080:8080"
     healthcheck:
@@ -59,14 +61,11 @@ services:
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
-    networks:
-      - ride_data_net
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 120s
+      timeout: 120s
+      retries: 3
     restart: always
     depends_on:
       <<: *airflow-common-depends-on
@@ -76,10 +75,10 @@ services:
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
-    networks:
-      - ride_data_net
-    command: >
-      -c "sh init-airflow.sh && echo 'Airflow DB and user init completed'"
+    command:
+      - -c
+      - |
+        ls; sh init-airflow.sh; echo "Completed database and user init"
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_MIGRATE: "true"
@@ -89,7 +88,3 @@ services:
 
 volumes:
   postgres-db-volume:
-
-networks:
-  ride_data_net:
-    driver: bridge

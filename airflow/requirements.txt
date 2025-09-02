@@ -1,0 +1,7 @@
+apache-airflow-providers-docker==3.7.5
+apache-airflow-providers-ssh==3.7.3
+apache-airflow[postgres]
+pyodbc==4.0.39
+sqlalchemy
+pytest
+apache-airflow-providers-fab==2.0.2
