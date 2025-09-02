@@ -20,7 +20,7 @@ with DAG(
     dag_id="test_dag",
     default_args=default_args,
     description="A simple test DAG to check Airflow setup",
-    start_date=datetime(2025, 9, 2),
+    start_date=datetime(2025, 9, 1),
     schedule_interval="* * * * *",
     catchup=False,
     tags=["test"],
