@@ -50,6 +50,7 @@ services:
       - spark-net
     volumes:
       - ./spark_client/examples:/opt/examples
+      - ./spark_jobs:/opt/spark_jobs
 
   # S3 compatible object storage: MinIO
   minio:
