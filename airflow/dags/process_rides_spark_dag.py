@@ -14,7 +14,7 @@ with DAG(
     dag_id="process_rides_spark_bash_dag",
     default_args=default_args,
     description="Incremental processing of taxi rides using Spark via BashOperator",
-    schedule_interval="*/10 * * * *",
+    schedule="*/10 * * * *",
     catchup=False,
     tags=["spark", "bash", "etl"],
 ) as dag:
