@@ -36,7 +36,7 @@ ENV PATH=$PATH:$JAVA_HOME/bin:$SPARK_HOME/bin:$SPARK_HOME/sbin
 ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9.7-src.zip:$PYTHONPATH
 
 # Install Spark 3.5.0
-RUN curl -L -o spark-3.5.0-bin-hadoop3.tgz https://archive.apache.org/dist/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz && \
+RUN curl -L -o spark-3.5.0-bin-hadoop3.tgz https://downloads.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz && \
     tar -xzf spark-3.5.0-bin-hadoop3.tgz && \
     mv spark-3.5.0-bin-hadoop3 /opt/spark && \
     rm spark-3.5.0-bin-hadoop3.tgz
