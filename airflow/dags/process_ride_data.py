@@ -181,13 +181,13 @@ if table_exists and last_processed_time is not None:
         final_df = existing_df.union(new_processed_df)
 
     print("💾 Writing merged data...")
-    final_df.write.mode("overwrite").jdbc(
+    final_df.write.mode("append").jdbc(
         url=db_url, table=PROCESSED_TABLE, properties=db_properties
     )
 
 else:
     print("🆕 First run - creating processed table...")
-    new_processed_df.write.mode("overwrite").jdbc(
+    new_processed_df.write.mode("append").jdbc(
         url=db_url, table=PROCESSED_TABLE, properties=db_properties
     )
     final_df = new_processed_df
