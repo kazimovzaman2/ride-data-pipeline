@@ -2,9 +2,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 import psycopg2
-import logging
 import random
 import string
+import logging
 
 DB_HOST = "taxi-db"
 DB_PORT = "5432"
@@ -13,8 +13,12 @@ DB_USER = "taxi"
 DB_PASSWORD = "taxi"
 
 
-def fetch_taxi_data():
-    """Fetch the latest taxi ride records from the database"""
+def random_string(length=6):
+    return "".join(random.choice(string.ascii_uppercase) for _ in range(length))
+
+
+def insert_random_taxi_ride():
+    """Insert a random taxi ride into taxi_rides table"""
     try:
         conn = psycopg2.connect(
             host=DB_HOST,
@@ -25,27 +29,40 @@ def fetch_taxi_data():
         )
         cursor = conn.cursor()
 
+        pickup_datetime = datetime.now() - timedelta(minutes=random.randint(0, 60))
+        dropoff_datetime = pickup_datetime + timedelta(minutes=random.randint(5, 60))
+        passenger_count = random.randint(1, 4)
+        trip_distance = round(random.uniform(0.5, 20.0), 2)
+        pickup_location = random_string()
+        dropoff_location = random_string()
+        fare_amount = round(random.uniform(5, 100), 2)
+
         cursor.execute(
             """
-            SELECT ride_id, pickup_datetime, dropoff_datetime,
-                   passenger_count, trip_distance, pickup_location,
-                   dropoff_location, fare_amount, created_at
-            FROM taxi_rides
-            ORDER BY created_at DESC
-            LIMIT 10;
-        """
+            INSERT INTO taxi_rides (
+                pickup_datetime, dropoff_datetime, passenger_count,
+                trip_distance, pickup_location, dropoff_location, fare_amount
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                pickup_datetime,
+                dropoff_datetime,
+                passenger_count,
+                trip_distance,
+                pickup_location,
+                dropoff_location,
+                fare_amount,
+            ),
         )
-
-        rows = cursor.fetchall()
-        logging.info("Fetched %d rows", len(rows))
-
-        for row in rows:
-            logging.info(row)
+        conn.commit()
+        logging.info(
+            "Inserted random taxi ride: %s -> %s", pickup_location, dropoff_location
+        )
 
         cursor.close()
         conn.close()
     except Exception as e:
-        logging.error("Error fetching taxi data: %s", e)
+        logging.error("Error inserting taxi ride: %s", e)
         raise
 
 
@@ -64,18 +81,18 @@ default_args = {
 }
 
 with DAG(
-    dag_id="fetch_taxi_data_dag",
+    dag_id="insert_random_taxi_ride_dag",
     default_args=default_args,
-    description="Fetch taxi rides from PostgreSQL every minute",
-    schedule_interval="*/1 * * * *",
+    description="Insert a random taxi ride into PostgreSQL every minute",
+    schedule="*/1 * * * *",
     start_date=datetime(2025, 9, 3),
     catchup=False,
     tags=["postgres", "taxi"],
 ) as dag:
 
-    fetch_data_task = PythonOperator(
-        task_id="fetch_taxi_data",
-        python_callable=fetch_taxi_data,
+    insert_random_task = PythonOperator(
+        task_id="insert_random_taxi_ride",
+        python_callable=insert_random_taxi_ride,
     )
 
-    fetch_data_task
+    insert_random_task
