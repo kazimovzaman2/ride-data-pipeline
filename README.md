@@ -4,6 +4,11 @@ A real-time data processing pipeline that generates realistic NYC taxi trip data
 
 ## Screenshots
 
+<img width="684" height="636" alt="image" src="https://github.com/user-attachments/assets/4e26a7bc-64db-45cc-b9c6-9738814a1852" />
+<img width="987" height="636" alt="image" src="https://github.com/user-attachments/assets/184cbe51-7d42-4dc2-8e7c-3e742e800999" />
+<img width="1708" height="569" alt="image" src="https://github.com/user-attachments/assets/b7356a31-aeb2-41da-816d-306abe3e996d" />
+
+
 ## Dataset & Processing
 
 **Synthetic NYC Taxi Dataset** - Generated in real-time with:
