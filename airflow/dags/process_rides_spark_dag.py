@@ -15,7 +15,7 @@ with DAG(
     dag_id="process_rides_spark_dag",
     default_args=default_args,
     description="Incremental processing of taxi rides using Spark",
-    schedule_interval="*/10 * * * *",
+    schedule="*/10 * * * *",
     start_date=datetime(2025, 9, 3),
     catchup=False,
     tags=["spark", "etl", "taxi"],
