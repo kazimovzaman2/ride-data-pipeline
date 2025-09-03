@@ -26,6 +26,6 @@ with DAG(
 spark-submit \
   --master spark://spark-master:7077 \
   --conf spark.eventLog.enabled=false \
-  /opt/spark_jobs/process_ride_data.py
+  /opt/airflow/dags/process_ride_data.py
 """,
     )
