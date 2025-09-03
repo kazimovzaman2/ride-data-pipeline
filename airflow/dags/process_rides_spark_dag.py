@@ -23,11 +23,9 @@ with DAG(
         task_id="process_rides_task",
         bash_command="""
 #!/bin/bash
-/opt/spark/bin/spark-submit \
+spark-submit \
   --master spark://spark-master:7077 \
-  --conf spark.driver.memory=2g \
-  --conf spark.executor.memory=2g \
-  --jars /opt/spark/jars/postgresql-42.6.0.jar \
+  --conf spark.eventLog.enabled=false \
   /opt/spark_jobs/process_ride_data.py
 """,
     )
