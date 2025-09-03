@@ -7,7 +7,7 @@ default_args = {
     "depends_on_past": False,
     "start_date": datetime(2025, 9, 3),
     "retries": 1,
-    "retry_delay": timedelta(minutes=2),
+    "retry_delay": timedelta(minutes=10),
 }
 
 with DAG(
